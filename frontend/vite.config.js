@@ -11,7 +11,43 @@ export default defineConfig({
       usePolling: true
     },
     proxy: {
-      '/api': {
+      '/auth': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
+      '/criaturas': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
+      '/catalogos': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
+      '/acciones': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
+      '/habilidades': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
+      '/inmunidades': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
+      '/salvaciones': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
+      '/resistencias': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
+      '/sentidos': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
+      '/batallas': {
         target: 'http://backend:8000',
         changeOrigin: true,
       }

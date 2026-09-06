@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 from app.core.security import create_access_token
 from app.db import get_db
 from app.models import User
-from app.schemas import UserCreate, UserResponse, Token
-from app.auth import authenticate_user, get_user_by_username, get_current_active_user
+from app.schemas import UserCreate, UserResponse, Token, PasswordUpdate
+from app.auth import authenticate_user, get_user_by_username, get_current_active_user, update_user_password
 
 router = APIRouter()
 
@@ -50,3 +50,9 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 def read_users_me(current_user: User = Depends(get_current_active_user)):
     """Get current user information"""
     return current_user
+
+@router.post("/change-password")
+def change_password(password_update: PasswordUpdate, current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
+    """Change user password"""
+    update_user_password(db, user=current_user, new_password=password_update.new_password)
+    return {"message": "Password updated successfully"}

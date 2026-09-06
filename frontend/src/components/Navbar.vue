@@ -1,21 +1,29 @@
 <template>
   <nav class="main-nav">
     <ul class="nav-links">
-      <li><a href="#">Criaturas</a></li>
+      <li><a @click="openCriaturasModal">Criaturas</a></li>
       <li><a href="#">Batalla</a></li>
     </ul>
     <div class="user-menu">
-      <a href="#">Perfil</a>
+      <button @click="openProfileModal" class="profile-button">Perfil</button>
       <button @click="logout" class="logout-button">Salir</button>
     </div>
   </nav>
 </template>
 
 <script setup>
-const emit = defineEmits(['logout']);
+const emit = defineEmits(['logout', 'open-profile-modal', 'open-criaturas-modal']);
 
 const logout = () => {
   emit('logout');
+};
+
+const openCriaturasModal = () =>{
+  emit('open-criaturas-modal');
+}
+
+const openProfileModal = () => {
+  emit('open-profile-modal');
 };
 </script>
 
@@ -58,19 +66,7 @@ const logout = () => {
   gap: 1.5rem; /* Spacing between Perfil and Salir */
 }
 
-.user-menu a {
-  color: #F5E8C7;
-  text-decoration: none;
-  font-family: 'Cinzel', serif;
-  font-size: 1.2rem;
-  transition: color 0.2s ease-in-out;
-}
-
-.user-menu a:hover {
-  color: #E65100;
-}
-
-.logout-button {
+.profile-button, .logout-button {
   background: none;
   border: 1px solid #795548;
   color: #F5E8C7;
@@ -81,7 +77,7 @@ const logout = () => {
   transition: all 0.2s ease-in-out;
 }
 
-.logout-button:hover {
+.profile-button:hover, .logout-button:hover {
   background-color: #795548;
   color: white;
 }

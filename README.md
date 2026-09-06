@@ -12,7 +12,7 @@ El proyecto está construido con un stack moderno y modular:
 *   **Framework:** [FastAPI](https://fastapi.tiangolo.com/) (Python)
 *   **Lenguaje:** Python 3.11+
 *   **ORM:** [SQLAlchemy](https://www.sqlalchemy.org/)
-*   **Base de Datos:** PostgreSQL (utilizando [Neon](https://neon.tech/) para la base de datos en la nube)
+*   **Base de Datos:** PostgreSQL
 *   **Autenticación:** JWT (JSON Web Tokens)
 *   **Servidor ASGI:** [Uvicorn](https://www.uvicorn.org/)
 
@@ -93,6 +93,5 @@ Para el despliegue en producción en plataformas como [Render](https://render.co
 
 ## Próximos Pasos
 
-*   Implementar la gestión completa de criaturas (CRUD).
 *   Desarrollar la funcionalidad de gestión de batallas.
 *   Expandir la interfaz de usuario para las secciones de "Criaturas", "Batalla" y "Perfil".

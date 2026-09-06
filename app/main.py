@@ -3,16 +3,11 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from app.api import api_router
-from app.db import engine, create_schemas
-from app.models import Base
+from app.db import engine
 from app.core.config import settings
 from sqlalchemy import text
 import os
 import time
-
-# Create schemas and tables
-create_schemas()
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -53,7 +48,7 @@ def read_root():
         "message": "Welcome to CriaturasWeb API",
         "docs": "/docs",
         "api_docs": f"{settings.API_V1_STR}/docs",
-        "health": "/api/v1/health/health"
+        "health": "/health/health"
     }
 
 @app.get("/docs", response_class=HTMLResponse)
@@ -81,58 +76,46 @@ def custom_docs(request: Request):
     # Define all endpoints with their status
     endpoints = {
         "Authentication": {
-            "POST /api/v1/auth/register": {
+            "POST /auth/register": {
                 "description": "Register a new user",
                 "status": "🟢 Active",
                 "requires_auth": False
             },
-            "POST /api/v1/auth/token": {
+            "POST /auth/token": {
                 "description": "Login and get access token",
                 "status": "🟢 Active",
                 "requires_auth": False
             }
         },
         "Users": {
-            "GET /api/v1/users/me": {
+            "GET /auth/me": {
                 "description": "Get current user information",
                 "status": "🟢 Active",
                 "requires_auth": True
             }
         },
-        "Examples": {
-            "POST /api/v1/examples/create": {
-                "description": "Create an example item",
-                "status": "🟢 Active",
-                "requires_auth": True
-            },
-            "GET /api/v1/examples/items": {
-                "description": "Get all example items",
-                "status": "🟢 Active",
-                "requires_auth": True
-            }
-        },
         "Health Checks": {
-            "GET /api/v1/health/health": {
+            "GET /health/health": {
                 "description": "Basic health check",
                 "status": "🟢 Active",
                 "requires_auth": False
             },
-            "GET /api/v1/health/database": {
+            "GET /health/database": {
                 "description": "Database health check",
                 "status": "🟢 Active" if db_healthy else "🔴 Unhealthy",
                 "requires_auth": False
             },
-            "GET /api/v1/health/auth": {
+            "GET /health/auth": {
                 "description": "Authentication system health",
                 "status": "🟢 Active" if auth_healthy else "🔴 Unhealthy",
                 "requires_auth": False
             },
-            "GET /api/v1/health/endpoints": {
+            "GET /health/endpoints": {
                 "description": "All endpoints status",
                 "status": "🟢 Active",
                 "requires_auth": False
             },
-            "GET /api/v1/health/full": {
+            "GET /health/full": {
                 "description": "Complete health check",
                 "status": "🟢 Active" if db_healthy and auth_healthy else "🔴 Unhealthy",
                 "requires_auth": False

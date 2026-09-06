@@ -36,7 +36,7 @@ const handleLogin = async () => {
 
     const formBody = Object.keys(details).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(details[key])).join('&');
 
-    const response = await fetch('/api/v1/auth/token', {
+    const response = await fetch('/auth/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'

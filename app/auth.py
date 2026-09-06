@@ -6,7 +6,7 @@ from app.db import get_db
 from app.models import User
 
 # OAuth2 scheme for token authentication
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 def get_user_by_username(db: Session, username: str) -> User:
     """Get user by username"""
@@ -49,3 +49,9 @@ def get_current_active_user(current_user: User = Depends(get_current_user)) -> U
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
+def update_user_password(db: Session, user: User, new_password: str):
+    """Update user password"""
+    user.hashed_password = User.get_password_hash(new_password)
+    db.add(user)
+    db.commit()
+    db.refresh(user)

@@ -25,6 +25,7 @@ const handleLoginSuccess = () => {
 };
 
 const handleLogout = () => {
+  localStorage.removeItem('accessToken');
   isLoggedIn.value = false;
 };
 </script>
