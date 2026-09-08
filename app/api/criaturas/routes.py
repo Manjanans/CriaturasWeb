@@ -71,7 +71,7 @@ async def actualizacion_detalle(
     stats = await updates(data, CriaturaStats, db)
     return stats
 
-@router.delete("/eliminar_criatura", status_code=204)
+@router.delete("/eliminar_criatura/{num_criat}", status_code=204)
 async def eliminacion_criatura(
     num_criat: int,
     db: Session = Depends(get_db),

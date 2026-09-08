@@ -20,11 +20,6 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 # Static files and templates
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-templates_path = os.path.join(BASE_DIR, "..", "templates")
-static_path = os.path.join(BASE_DIR, "..", "static")
-
-templates = Jinja2Templates(directory=templates_path)
-app.mount("/static", StaticFiles(directory=static_path), name="static")
 
 @app.get("/status", response_class=HTMLResponse)
 def get_status(request: Request):
