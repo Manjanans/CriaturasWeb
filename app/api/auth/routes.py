@@ -17,7 +17,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     if db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already registered"
+            detail="Nombre de usuario ocupado. Elija otro."
         )
     
     hashed_password = User.get_password_hash(user.password)
@@ -39,7 +39,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Nombre de usuario o contraseña incorrecto",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
@@ -52,7 +52,8 @@ def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
 
 @router.post("/change-password")
-def change_password(password_update: PasswordUpdate, current_user: User = Depends(get_current_active_user), db: Session = Depends(get_db)):
+def change_password(password_update: UserCreate, db: Session = Depends(get_db)):
     """Change user password"""
-    update_user_password(db, user=current_user, new_password=password_update.new_password)
+    update_user_password(db, usuario=password_update.username, new_password=password_update.password)
     return {"message": "Password updated successfully"}
+

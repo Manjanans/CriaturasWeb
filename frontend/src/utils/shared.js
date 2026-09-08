@@ -1,6 +1,4 @@
-export async function apiFetch(ruta, opciones = {}) {
-    const token = localStorage.getItem('accessToken')
-
+export async function apiFetch(token, ruta, opciones = {}) {
     const response = await fetch(ruta, {
         ...opciones,                              // spread: copia las opciones que le pases
         headers: {
@@ -21,18 +19,16 @@ export async function apiFetch(ruta, opciones = {}) {
     return response.json()
 }
 
-export async function verUsuario(){
-        const token = localStorage.getItem("accessToken");
+export async function verUsuario(token){
+    const response = await fetch('/auth/me', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }       
+    });
 
-        const response = await fetch('/auth/me', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }       
-        });
+    const data = await response.json();
 
-        const data = await response.json();
-
-        console.log(data.username, data.id);
-    }
+    return { data, token }
+}

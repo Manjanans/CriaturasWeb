@@ -9,8 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "pinia": "^4.0.3",
     "vue": "^3.2.47",
-    "vue-router": "^4.2.0"
+    "vue-router": "^4.2.0",
+    "vue-toastification":"^2.0.0-rc.5"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",

@@ -49,8 +49,9 @@ def get_current_active_user(current_user: User = Depends(get_current_user)) -> U
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
-def update_user_password(db: Session, user: User, new_password: str):
+def update_user_password(db: Session, usuario:str, new_password: str):
     """Update user password"""
+    user = get_user_by_username(db, username=usuario)
     user.hashed_password = User.get_password_hash(new_password)
     db.add(user)
     db.commit()

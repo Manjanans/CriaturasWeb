@@ -12,7 +12,8 @@ const routes = [
     {
         path: '/dashboard',
         name: 'dashboard',
-        component: DashboardView
+        component: DashboardView,
+        meta: { requiresAuth: true }
     }
 ]
 
@@ -22,9 +23,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-  const token = localStorage.getItem('accessToken')
+  const token = localStorage.getItem('accessToken');
   if (to.meta.requiresAuth && !token) {
     return { name: 'login' }    // redirige al login
+  }
+  if (to.name === 'login' && token) {
+    return { name: 'dashboard' }
   }
 });
 
