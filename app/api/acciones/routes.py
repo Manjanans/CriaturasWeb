@@ -11,7 +11,7 @@ from app.shared.shared import inserts, search_by_id, updates, deletes
 
 router = APIRouter()
 
-@router.get("/ver_acciones", response_model=list[AccionesView])
+@router.get("/ver_acciones/{num_item}", response_model=list[AccionesView])
 async def visualizar_acciones(
     num_item: int,
     db: Session = Depends(get_db),
@@ -41,7 +41,7 @@ async def actualizacion_accion(
     accion = await updates(data, CriaturaDetalle, db)
     return accion
 
-@router.delete("/eliminar_accion", status_code=204)
+@router.delete("/eliminar_accion/{num_accion}", status_code=204)
 async def eliminacion_accion(
     num_accion: int,
     db: Session = Depends(get_db),

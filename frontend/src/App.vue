@@ -1,13 +1,11 @@
 <template>
-    <Navbar :show="auth.isAuthenticated" />
+    <Navbar :show="useAuthStore().isAuthenticated" />
     <RouterView />
 </template>
 
 <script setup>
 import Navbar from '@/components/shared/Navbar.vue';
-import { useAuthStore } from '@/utils/auth.js'
-
-const auth = useAuthStore()
+import { useAuthStore } from '@/stores/authStore'
 </script>
 
 <style>

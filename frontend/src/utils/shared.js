@@ -1,4 +1,8 @@
-export async function apiFetch(token, ruta, opciones = {}) {
+import { useAuthStore } from "@/stores/authStore"
+
+export async function apiFetch(ruta, opciones = {}) {
+    const token = useAuthStore().accessToken;
+
     const response = await fetch(ruta, {
         ...opciones,                              // spread: copia las opciones que le pases
         headers: {
@@ -17,18 +21,4 @@ export async function apiFetch(token, ruta, opciones = {}) {
     if (response.status === 204) return null
 
     return response.json()
-}
-
-export async function verUsuario(token){
-    const response = await fetch('/auth/me', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }       
-    });
-
-    const data = await response.json();
-
-    return { data, token }
 }

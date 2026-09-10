@@ -30,24 +30,22 @@
 <script setup>
     // Importaciones
     import { reactive, ref } from 'vue';
-    import { useRouter } from 'vue-router';
-    import { useToast } from 'vue-toastification';
     // Autorización con Pinia, para mostrar navbar después de iniciar sesión
-    import { useAuthStore } from '@/utils/auth.js';
+    import { useAuthStore } from '@/stores/authStore.js';
     //Modal
     import ModalUsuario from '@/components/account/ModalUsuario.vue';
 
     // Creación del objeto auth, para usar validaciones de Pinia
     const auth = useAuthStore()
 
-    const router = useRouter();
+    
     const formulario = reactive({
         user: '',
         passw: ''
     });
 
-    const mostrarModal = ref(false)
-    const modoModal = ref('')
+    const mostrarModal = ref(false);
+    const modoModal = ref('');
 
     const abrirCrear = () => {
         modoModal.value = 'crear'
@@ -63,33 +61,8 @@
         mostrarModal.value = false
         modoModal.value = ''
     }
-    const toast = useToast();
 
     const acceder = async () => {
-        try{
-            const response = await fetch('/auth/token', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                },
-                
-                body: `username=${encodeURIComponent(formulario.user)}&password=${encodeURIComponent(formulario.passw)}`
-            });
-
-            if (!response.ok) {
-                const err = await response.json()
-                throw new Error(err.detail)
-            }
-
-            const data = await response.json();
-            auth.login(data.access_token);
-            toast.success("Cuenta validada");
-            router.push({name: 'dashboard'});
-        }catch (e){
-            toast.error("Usuario o contraseña incorrectos, intenta nuevamente");
-            console.error('No se pudo', e);
-            formulario.user = '';
-            formulario.passw = '';
-        }
+        await auth.login(formulario);
     }
 </script>

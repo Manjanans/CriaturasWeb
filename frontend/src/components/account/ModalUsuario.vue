@@ -1,12 +1,15 @@
 <script setup>
-    import {useToast} from 'vue-toastification';
     import {reactive} from 'vue';
+    import { useAuthStore } from '@/stores/authStore.js';
+    import Modal from '@/components/shared/Modal.vue';
 
-    const toast = useToast();
+    const auth = useAuthStore()
+
     const props = defineProps({
         show: Boolean,
         modo: String
-    })
+    });
+
     const emit = defineEmits(['exito', 'cancelar']);
 
     const formulario = reactive({
@@ -15,60 +18,13 @@
     });
 
     const crearUsuario = async () => {
-        const nuevo = {"username": formulario.user, "password":formulario.passw}
-
-        try{
-            const response = await fetch('/auth/register', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(nuevo)
-            });
-
-        if (!response.ok) {
-            const err = await response.json()
-            toast.error(err.detail)
-            throw new Error(err.detail);
-        }
-
-        toast.success("Usuario creado exitosamente");
-        formulario.user = '';
-        formulario.passw = '';
+        await auth.createUser(formulario)
         emit("exito");
-        } catch(e){
-            console.error("Hubo un error", e);
-            formulario.user = '';
-            formulario.passw = '';
-        }
     }
 
     const cambiarPassw = async () =>{
-        const nuevo = {"username": formulario.user, "password":formulario.passw}
-
-        try{
-            const response = await fetch('/auth/change-password', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(nuevo)
-            });
-
-        if (!response.ok) {
-            const err = await response.json()
-            toast.error(err.detail);
-            throw new Error(err.detail);
-        }
-
-        toast.success("Contraseña cambiada exitosamente");
+        await auth.changePassword(formulario)
         emit("exito");
-
-        } catch(e){
-            console.error("Hubo un error", e);
-            formulario.user = '';
-            formulario.passw = '';
-        }
     }
 
     const ejecutarFuncion = async () =>{
@@ -86,7 +42,7 @@
 </script>
 
 <template>
-    <div  v-if="show" class="">
+    <Modal :show="show">
         <form @submit.prevent="ejecutarFuncion">
             <div class="grid gap-6 mb-6 mt-6 md:grid-cols-2">
                 <div class="pl-8 pr-8">
@@ -111,6 +67,5 @@
         <div class="">
             <button @click="cancelar">Cancelar</button>
         </div>
-    </div>
-    
+    </Modal>   
 </template>

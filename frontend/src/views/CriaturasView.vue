@@ -1,40 +1,43 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { apiFetch } from '@/utils/shared';
-import { useAuthStore } from '@/utils/auth';
-import CriaturaModal from '@/components/criaturas/CriaturaModal.vue';
-
-const auth = useAuthStore();
-const token = auth.accessToken;
+import CrearCriaturaModal from '@/components/criaturas/CrearCriaturaModal.vue';
+import { useCriaturaStore } from '@/stores/criaturaStore';
+import AccionesCriaturaModal from '@/components/criaturas/AccionesCriaturaModal.vue';
 
 const mostrarModal = ref(false);
-const criaturas = ref([]);
-const detalles = ref([]);
-const abiertos = ref([]);
+const store = useCriaturaStore();
+const crear = ref(false);
+const accion = ref(false);
+const idCriatura = ref(0);
 
-onMounted(async () => {
-    const token = auth.accessToken;
-    criaturas.value = await apiFetch(token, '/criaturas/');
-});
+onMounted(store.actualizaLista)
 
-const verDetalle = async (id) => {
-   
-    if (!detalles.value[id]) {
-        detalles.value[id] = await apiFetch(
-            token,
-            `/criaturas/ver_criatura/${id}`
-        );        
-    }
+const crearCriatura = () => {
+    mostrarModal.value = !mostrarModal.value;
+    crear.value = !crear.value;
+}
 
-    if (abiertos.value.includes(id)) {
-        abiertos.value = abiertos.value.filter(i => i !== id);
-    } else {
-        abiertos.value.push(id);
+const calcularModificador = (atr) =>{
+    return Math.floor((atr-10)/2)
+}
+
+const calcularVida = (tipo, dados, vida) => {
+    if (vida!=0){
+        return vida
+    }else{
+        let life = 0;
+        for(let i=0; i<dados; i++){
+            let valor = Math.floor(Math.random()*tipo);
+            life+=valor
+        }
+        return life
     }
 }
 
-const crearCriatura = ()=>{
-    mostrarModal.value = !mostrarModal.value;
+const acciones = (id) => {
+    idCriatura.value = id;
+    accion.value = !accion.value;
+    mostrarModal.value = !mostrarModal.value
 }
 </script>
 
@@ -43,13 +46,54 @@ const crearCriatura = ()=>{
         <div class="">
             <button @click="crearCriatura">Crear criatura</button>
         </div>
-        <div v-for="c in criaturas" class="" :key="c.id">
+        <div v-for="c in store.criaturas" class="" :key="c.id">
             <div class="" name="general">
-                {{ c.nombre }} - Tipo dado: {{ c.tipo }} - Cantidad de dados: {{ c.dados }} - Vida Total: {{ c.vida }} <button @click="verDetalle(c.id)">Ver detalle</button>
+                {{ c.nombre }} - <span v-if="c.tipo!=0">Tipo dado: {{ c.tipo }} - Cantidad de dados: {{ c.dados }} -</span> Vida Total: {{ calcularVida(c.tipo, c.dados, c.vida) }} <button @click="store.verDetalle(c.id)">Ver detalle</button>
             </div>
-            <div v-if="abiertos.includes(c.id)" class="" name="detalle">Clase Armadura (CA): {{ detalles[c.id]?.armadura }}</div>
+            <div v-if="store.abiertos.includes(c.id)" class="" name="detalle">
+                <div class="grid grid-cols-5 gap-5">
+                    <div class="">
+                        <button @click="acciones(c.id)">Acciones de la Criatura</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="">
+                        Clase Armadura (CA): {{ store.detalles[c.id]?.armadura }}
+                    </div>
+                    <div class="">
+                        Velocidad (pies): {{ store.detalles[c.id]?.velocidad }}
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="">
+                        Fuerza (STR): {{ store.detalles[c.id]?.fuerza }}
+                        Modificador: {{ calcularModificador( store.detalles[c.id]?.fuerza ) }}
+                    </div>
+                    <div class="">
+                        Destreza (DEX): {{ store.detalles[c.id]?.destreza }}
+                        Modificador: {{ calcularModificador( store.detalles[c.id]?.destreza ) }}
+                    </div>
+                    <div class="">
+                        Constitucion (con): {{ store.detalles[c.id]?.constitucion }}
+                        Modificador: {{ calcularModificador( store.detalles[c.id]?.constitucion ) }}
+                    </div>
+                    <div class="">
+                        Inteligencia (INT): {{ store.detalles[c.id]?.inteligencia }}
+                        Modificador: {{ calcularModificador( store.detalles[c.id]?.inteligencia ) }}
+                    </div>
+                    <div class="">
+                        Sabiduría (WIS): {{ store.detalles[c.id]?.sabiduria }}
+                        Modificador: {{ calcularModificador( store.detalles[c.id]?.sabiduria ) }}
+                    </div>
+                    <div class="">
+                        Carisma (CHA): {{ store.detalles[c.id]?.carisma }}
+                        Modificador: {{ calcularModificador( store.detalles[c.id]?.carisma ) }}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <CriaturaModal :show="mostrarModal" @cancelar="crearCriatura" />
+    <CrearCriaturaModal :show="crear" @cancelar="crearCriatura" />
+    <AccionesCriaturaModal :show="accion" :id="idCriatura" @cancelar="acciones" />
 </template>

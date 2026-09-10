@@ -1,10 +1,7 @@
 <script setup>
 import { reactive, ref } from 'vue';
-import { useAuthStore } from '@/utils/auth';
-import { apiFetch } from '@/utils/shared';
-import { useToast } from 'vue-toastification';
-
-const toast = useToast()
+import { useCriaturaStore } from '@/stores/criaturaStore';
+import Modal from '@/components/shared/Modal.vue';
 
 const criatura = reactive({
     'cantdados': null,
@@ -31,59 +28,19 @@ const mostrar = ()=>{
     mostrarVida.value = !mostrarVida.value
 }
 const props = defineProps({
-        show: Boolean
-    });
+    show: Boolean
+});
+
 const emit = defineEmits(['cancelar']);
 
-const crearCriatura = async () =>{
-    const token = useAuthStore().accessToken;
-    const privado = ref(0);
-
-    if(criatura.publico === "false"){
-        const response = await apiFetch(token, '/auth/me');
-        criatura.id_privado = response.id
-    }
-
-    console.log(criatura.publico);
-    console.log(`La variable es ${privado.value}, en criatura es ${criatura.id_privado}`);
-    
-
-    const criaturaBody = {
-        "base":{
-            "cantdados": criatura.cantdados ? criatura.cantdados : 0,
-            "tipodado": criatura.tipodado ? criatura.tipodado : 0,
-            "vidatotal": criatura.vidatotal ? criatura.vidatotal : 0,
-            "modificadorvida": criatura.modificadorvida ? criatura.modificadorvida : 0,
-            "nombre": criatura.nombre,
-            "cantexp": criatura.cantexp,
-            "publico": criatura.publico,
-            "id_privado": criatura.id_privado
-        },
-        "stats":{
-            "clasearmadura": criatura.clasearmadura,
-            "velocidad": criatura.velocidad,
-            "fuerza": criatura.fuerza,
-            "destreza": criatura.destreza,
-            "constitucion": criatura.constitucion,
-            "inteligencia": criatura.inteligencia,
-            "sabiduria": criatura.sabiduria,
-            "carisma": criatura.carisma
-        }
-        
-
-    }
-    const response = await apiFetch(token, '/criaturas/crear', {
-        method:'POST',
-        body: JSON.stringify(criaturaBody)
-    });
-    console.log(response);
-    toast.success("Criatura creada exitosamente");
-    emit('cancelar');    
+const crearCriatura = () => {
+    useCriaturaStore().crearNuevaCriatura(criatura);
+    emit('cancelar');
 }
 
 </script>
 <template>
-    <div v-if="show" class="pt-5">
+    <Modal :show="show">
         <form @submit.prevent="crearCriatura">
             <div class="grid grid-cols-2 gap-4 pb-6">
                 <div class="pb-5">
@@ -174,5 +131,5 @@ const crearCriatura = async () =>{
             <button type="submit">Crear Criatura</button>
         </form>
         <button @click="emit('cancelar')">Cancelar</button>
-    </div>
+    </Modal>
 </template>
