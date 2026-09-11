@@ -11,7 +11,7 @@ from app.shared.shared import inserts, search_by_id, updates, deletes
 
 router = APIRouter()
 
-@router.get("/ver_habilidades", response_model=list[HabilidadesView])
+@router.get("/ver_habilidades/{num_criat}", response_model=list[HabilidadesView])
 async def visualizar_habilidades(
     num_criat: int,
     db: Session = Depends(get_db),
@@ -39,7 +39,7 @@ async def update_habilidad(
     actualiza = await updates(data, HabilidadCriatura, db)
     return actualiza
 
-@router.delete("/eliminar_habilidad", status_code=204)
+@router.delete("/eliminar_habilidad/{num_criat}", status_code=204)
 async def elim_habilidad(
     num_criat: int,
     db: Session = Depends(get_db),

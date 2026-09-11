@@ -57,12 +57,15 @@ CREATE TABLE sentidocriatura (
 
 CREATE TABLE tipodesc(
 	id SERIAL PRIMARY KEY,
-	descripcion VARCHAR(10) NOT NULL
+	descripcion VARCHAR(20) NOT NULL
 );
 
 INSERT INTO tipodesc(descripcion) VALUES
 ('Habilidad'),
-('Acción');
+('Acción'),
+('Acción adicional'),
+('Reacción'),
+('Acciones legendarias');
 
 CREATE TABLE criaturadetalle(
 	id SERIAL PRIMARY KEY,

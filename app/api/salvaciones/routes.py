@@ -11,7 +11,7 @@ from app.shared.shared import inserts, search_by_id, updates, deletes
 
 router = APIRouter()
 
-@router.get("/ver_salvaciones", response_model=list[SalvacionesView])
+@router.get("/ver_salvaciones/{num_criat}", response_model=list[SalvacionesView])
 async def visualizar_salvaciones(
     num_criat: int,
     db: Session = Depends(get_db),
@@ -39,7 +39,7 @@ async def update_salvacion(
     actualiza = await updates(data, TiradaSalvacion, db)
     return actualiza
 
-@router.delete("/eliminar_salvacion", status_code=204)
+@router.delete("/eliminar_salvacion/{num_criat}", status_code=204)
 async def elim_salvacion(
     num_criat: int,
     db: Session = Depends(get_db),

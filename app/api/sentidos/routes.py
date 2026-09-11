@@ -11,7 +11,7 @@ from app.shared.shared import inserts, search_by_id, updates, deletes
 
 router = APIRouter()
 
-@router.get("/ver_sentidos", response_model=list[SentidosView])
+@router.get("/ver_sentidos/{num_criat}", response_model=list[SentidosView])
 async def visualizar_sentidos(
     num_criat: int,
     db: Session = Depends(get_db),
@@ -21,7 +21,7 @@ async def visualizar_sentidos(
     sentidos = db.execute(stmt).scalars()
     return sentidos
 
-@router.post("/crear_sentidos", response_model=SentidoResponse)
+@router.post("/crear_sentido", response_model=SentidoResponse)
 async def crear_sentido(
     data: SentidoCreate,
     db: Session = Depends(get_db),
@@ -39,7 +39,7 @@ async def update_sentido(
     actualiza = await updates(data, SentidoCriatura, db)
     return actualiza
 
-@router.delete("/eliminar_sentido", status_code=204)
+@router.delete("/eliminar_sentido/{num_criat}", status_code=204)
 async def elim_sentido(
     num_criat: int,
     db: Session = Depends(get_db),

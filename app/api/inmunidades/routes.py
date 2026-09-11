@@ -11,7 +11,7 @@ from app.shared.shared import inserts, search_by_id, updates, deletes
 
 router = APIRouter()
 
-@router.get("/ver_inmunidades", response_model=list[InmunidadesView])
+@router.get("/ver_inmunidades/{num_criat}", response_model=list[InmunidadesView])
 async def visualizar_inmunidades(
     num_criat: int,
     db: Session = Depends(get_db),
@@ -39,7 +39,7 @@ async def update_inmunidad(
     actualiza = await updates(data, InmunidadCondicion, db)
     return actualiza
 
-@router.delete("/eliminar_inmunidad", status_code=204)
+@router.delete("/eliminar_inmunidad/{num_criat}", status_code=204)
 async def elim_inmunidad(
     num_criat: int,
     db: Session = Depends(get_db),

@@ -9,6 +9,7 @@ export const useAccioneStore = defineStore('catalogo', () => {
     const habilidades = ref([]);
     const acciones = ref([]);
     const tipos = ref([]);
+    const clase = ref([])
     const toast = useToast();
 
     const actualizaHabilidades = async (id) => {
@@ -16,6 +17,7 @@ export const useAccioneStore = defineStore('catalogo', () => {
         try{
             acciones.value = todo.filter(accion => accion.tipo === "Acción")
             habilidades.value = todo.filter(accion => accion.tipo === "Habilidad")
+            clase.value = new Set(todo.map(accion => accion.tipo))
         }catch (e){
             console.error(e)
         }
@@ -27,7 +29,6 @@ export const useAccioneStore = defineStore('catalogo', () => {
     }
 
     const agregarAccion = async (accion) => {
-        console.log(accion.idcriatura)
         const agregar = {
             "idcriatura": accion.idcriatura,
             "idtipodesc": accion.idtipo,
@@ -44,5 +45,5 @@ export const useAccioneStore = defineStore('catalogo', () => {
         toast.success("Habilidad agregada exitosamente")
     }
 
-    return {actualizaHabilidades, tipos, agregarAccion, cargarTipos, habilidades, acciones}
+    return {actualizaHabilidades, tipos, agregarAccion, cargarTipos, habilidades, acciones, clase}
 });

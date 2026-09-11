@@ -1,11 +1,11 @@
 <script setup>
-import { useAccioneStore } from '@/stores/accioneStore';
+import { useHabilidadStore } from '@/stores/habilidadStore'; 
 import { ref, reactive, onMounted, watch } from 'vue';
 import Modal from '@/Components/shared/Modal.vue';
 
-const store = useAccioneStore();
+const store = useHabilidadStore();
 const agregar = ref(false);
-const cid = ref(0); 
+const cid  = ref(0);
 
 const formulario = () => {
     agregar.value = !agregar.value;
@@ -18,11 +18,10 @@ const props = defineProps(
     }
 );
 
-const accion = reactive({
+const resistencia = reactive({
     'idcriatura': cid,
     'idtipo': "",
-    'titulo': null,
-    'descripcion': null
+    'cantidad': ""
 });
 
 const cerrar = () => {
@@ -42,13 +41,12 @@ watch(
             cid.value = nuevoId;
         }
     }
-);
+)
 
 const acciones = () => {
-    store.agregarAccion(accion);
-    accion.idtipo = '';
-    accion.titulo = null;
-    accion.descripcion = null;
+    store.agregarHabilidad(resistencia);
+    resistencia.idtipo = '';
+    resistencia.cantidad = "";
 }
 
 const emit = defineEmits(['cancelar']);
@@ -57,23 +55,14 @@ const emit = defineEmits(['cancelar']);
 <template>
     <Modal :show="show && !agregar">
         <div class="">
-            <button @click="formulario">Agregar acción/habilidad</button>
+            <button @click="formulario">Agregar Habilidad</button>
         </div>
         <h1>Habilidades</h1>
         <div v-for="a in store.habilidades" class="">
             <div class="">
-                {{ a.titulo }}
+                {{ a.habilidad }}: {{a.modif}}
             </div>
-            <div class="">{{ a.detalle }}</div>
         </div>
-        <h1>Acciones</h1>
-        <div v-for="a in store.acciones" class="">
-            <div class="">
-                {{ a.titulo }}
-            </div>
-            <div class="">{{ a.detalle }}</div>
-        </div>
-
         <div class="">
             <button @click="cerrar">Volver</button>
         </div>
@@ -83,22 +72,23 @@ const emit = defineEmits(['cancelar']);
             <div class="grid grid-cols-2 gap-6">
                 <div class="">
                     <div class="">
-                        <label for="">Ingresa un título:</label>
-                        <input v-model="accion.titulo" type="text" placeholder="Ataque" required>
+                        <label for="">Selecciona la Habilidad:</label>
+                        <select v-model="resistencia.idtipo" name="tipo">
+                            <option value="">Elige una opción...</option>
+                            <option v-for="a in store.tipos" :key="a.id" :value="a.id">{{a.descripcion}}</option>
+                        </select>
                     </div>
-                    <br>
                     <div class="">
-                        <label for="">Ingresa la descripción:</label>
-                        <textarea v-model="accion.descripcion" name="" id="" rows="8" placeholder="Hace 2d6" required></textarea>
+                        <label for="cantidad">Ingresa el modificador (solo el número):</label>
+                        <input v-model.number="resistencia.cantidad" type="number" name="cantidad" placeholder="0">
                     </div>
+
+                    <br>
+                    <div class=""></div>
                 </div>
                 <div class="">
-                    <select v-model="accion.idtipo" name="tipo">
-                        <option value="">Elige una opción...</option>
-                        <option v-for="a in store.tipos" :key="a.id" :value="a.id">{{a.descripcion}}</option>
-                    </select>
                     <div class="">
-                        <button type="submit">Agregar habilidad</button>
+                        <button type="submit">Agregar Habilidad</button>
                     </div>
                 </div>
             </div>

@@ -11,7 +11,7 @@ from app.shared.shared import inserts, search_by_id, updates, deletes
 
 router = APIRouter()
 
-@router.get("/ver_resistencias", response_model=list[ResistenciasView])
+@router.get("/ver_resistencias/{num_criat}", response_model=list[ResistenciasView])
 async def visualizar_resistencias(
     num_criat: int,
     db: Session = Depends(get_db),
@@ -39,7 +39,7 @@ async def update_resistencia(
     actualiza = await updates(data, Resistencia, db)
     return actualiza
 
-@router.delete("/eliminar_resistencia", status_code=204)
+@router.delete("/eliminar_resistencia/{num_criat}", status_code=204)
 async def elim_resistencia(
     num_criat: int,
     db: Session = Depends(get_db),

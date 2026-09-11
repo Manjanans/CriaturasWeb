@@ -3,8 +3,6 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
 
-
-
 export const useCriaturaStore = defineStore('criatura', () => 
 {
     const toast = useToast();
