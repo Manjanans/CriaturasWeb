@@ -46,6 +46,8 @@ class Detalles(Base):
     inteligencia = Column(Integer)
     sabiduria = Column(Integer)
     carisma = Column(Integer)
+    duenio = Column(Integer)
+    publico = Column(Boolean)
 
 class Sentidos(Base):
     __tablename__= "sentidos"
@@ -53,6 +55,7 @@ class Sentidos(Base):
 
     id = Column(Integer, primary_key = True)
     idcriatura = Column(Integer)
+    idtiposentido = Column(Integer)
     tiposentido = Column(String(25))
     valor = Column(Integer)
 
@@ -61,6 +64,7 @@ class Habilidades(Base):
     __table_args__= {"schema": "public"}
 
     id = Column(Integer, primary_key = True)
+    idhabilidad = Column(Integer)
     idcriatura = Column(Integer)
     habilidad = Column(String(20))
     modif = Column(Integer)
@@ -71,6 +75,7 @@ class Salvaciones(Base):
     
     id = Column(Integer, primary_key = True)
     idcriatura = Column(Integer)
+    idcaracteristica = Column(Integer)
     carac = Column(String(255))
     modif = Column(Integer)
 
@@ -88,5 +93,6 @@ class Resistencias(Base):
 
     id = Column(Integer, primary_key = True)
     idcriatura = Column(Integer)
+    idtipodanio = Column(Integer)
     resist = Column(String(25))
     valor = Column(Numeric(2,1))

@@ -36,5 +36,34 @@ export const useResistenciaStore = defineStore('resistencia', () => {
         actualizaResistencias(accion.idcriatura);
     }
 
-    return { resistencias, tipos, actualizaResistencias, cargarTipos, agregarResistencia }
+    const editarResistencia = async (accion) => {
+        const agregar = {
+            "id": accion.id,
+            "idcriatura": accion.idcriatura,
+            "idtipodanio": accion.idtipo,
+            "cantidad": accion.cantidad
+        }
+        const response = await apiFetch(
+            "resistencias/editar_resistencia", 
+            {
+            method: 'PUT',
+            body: JSON.stringify(agregar)
+            }
+        );
+        toast.success("Resistencia editada exitosamente");
+        actualizaResistencias(accion.idcriatura);
+    }
+
+    const eliminarResistencia = async(id, idcriatura) =>{
+        const response = await apiFetch(
+            `resistencias/eliminar_resistencia/${id}`, 
+            {
+            method: 'DELETE'
+            }
+        );
+        toast.success("Resistencia eliminada exitosamente");
+        actualizaResistencias(idcriatura);
+    }
+
+    return { editarResistencia, eliminarResistencia, resistencias, tipos, actualizaResistencias, cargarTipos, agregarResistencia }
 });

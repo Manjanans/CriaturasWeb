@@ -7,7 +7,8 @@ import ResistenciasCriaturaModal from '@/components/criaturas/ResistenciasCriatu
 import InmunidadesCriatura from '@/components/criaturas/InmunidadesCriatura.vue';
 import SalvacionesCriatura from '@/components/criaturas/SalvacionesCriatura.vue';
 import HabilidadesCriatura from '@/components/criaturas/HabilidadesCriatura.vue';
-import SentidosCriatura from '../components/criaturas/SentidosCriatura.vue';
+import SentidosCriatura from '@/components/criaturas/SentidosCriatura.vue';
+import Modal from '@/components/shared/Modal.vue'
 
 const mostrarModal = ref(false);
 const store = useCriaturaStore();
@@ -19,29 +20,16 @@ const inmunidad = ref(false);
 const salvacion = ref(false);
 const habilidad = ref(false);
 const sentido = ref(false);
+const eliminar = ref(false);
+const name = ref('');
+const crac = ref('');
 
 onMounted(store.actualizaLista)
 
 const crearCriatura = () => {
     mostrarModal.value = !mostrarModal.value;
+    crac.value = 'crear';
     crear.value = !crear.value;
-}
-
-const calcularModificador = (atr) =>{
-    return Math.floor((atr-10)/2)
-}
-
-const calcularVida = (tipo, dados, vida) => {
-    if (vida!=0){
-        return vida
-    }else{
-        let life = 0;
-        for(let i=0; i<dados; i++){
-            let valor = Math.floor(Math.random()*tipo);
-            life+=valor
-        }
-        return life
-    }
 }
 
 const acciones = (id) => {
@@ -79,6 +67,26 @@ const sentidos = (id) => {
     sentido.value = !sentido.value;
     mostrarModal.value = !mostrarModal.value;
 }
+
+const eliminate = (id, nombre) => {
+    idCriatura.value = id;
+    eliminar.value = !eliminar.value;
+    mostrarModal.value = !mostrarModal.value;
+    name.value = nombre;
+}
+
+const elimination = () =>{
+    store.eliminarCriatura(idCriatura.value);
+    eliminar.value = !eliminar.value;
+    mostrarModal.value = !mostrarModal.value;
+}
+
+const editar = (id) => {
+    mostrarModal.value = !mostrarModal.value;
+    crac.value = 'editar';
+    idCriatura.value = id;
+    crear.value = !crear.value;
+}
 </script>
 
 <template>
@@ -88,7 +96,13 @@ const sentidos = (id) => {
         </div>
         <div v-for="c in store.criaturas" class="" :key="c.id">
             <div class="" name="general">
-                {{ c.nombre }} - <span v-if="c.tipo!=0">Tipo dado: {{ c.tipo }} - Cantidad de dados: {{ c.dados }} -</span> Vida Total: {{ calcularVida(c.tipo, c.dados, c.vida) }} <button @click="store.verDetalle(c.id)">Ver detalle</button>
+                {{ c.nombre }} - <span v-if="c.tipo!=0">Tipo dado: {{ c.tipo }} - Cantidad de dados: {{ c.dados }} -</span> Vida Total: {{ store.calcularVida(c.tipo, c.dados, c.vida) }} <button @click="store.verDetalle(c.id)">Ver detalle</button>
+            </div>
+            <div class="">
+                <button @click="editar(c.id)">Editar {{ c.nombre }}</button>
+            </div>
+            <div  class="">
+                <button @click="eliminate(c.id, c.nombre)">Eliminar {{ c.nombre }}</button> 
             </div>
             <div v-if="store.abiertos.includes(c.id)" class="" name="detalle">
                 <div class="grid grid-cols-6 gap-5">
@@ -122,39 +136,47 @@ const sentidos = (id) => {
                 <div class="grid grid-cols-3 gap-4">
                     <div class="">
                         Fuerza (STR): {{ store.detalles[c.id]?.fuerza }}
-                        Modificador: {{ calcularModificador( store.detalles[c.id]?.fuerza ) }}
+                        Modificador: {{ store.calcularModificador( store.detalles[c.id]?.fuerza ) }}
                     </div>
                     <div class="">
                         Destreza (DEX): {{ store.detalles[c.id]?.destreza }}
-                        Modificador: {{ calcularModificador( store.detalles[c.id]?.destreza ) }}
+                        Modificador: {{ store.calcularModificador( store.detalles[c.id]?.destreza ) }}
                     </div>
                     <div class="">
                         Constitucion (con): {{ store.detalles[c.id]?.constitucion }}
-                        Modificador: {{ calcularModificador( store.detalles[c.id]?.constitucion ) }}
+                        Modificador: {{ store.calcularModificador( store.detalles[c.id]?.constitucion ) }}
                     </div>
                     <div class="">
                         Inteligencia (INT): {{ store.detalles[c.id]?.inteligencia }}
-                        Modificador: {{ calcularModificador( store.detalles[c.id]?.inteligencia ) }}
+                        Modificador: {{ store.calcularModificador( store.detalles[c.id]?.inteligencia ) }}
                     </div>
                     <div class="">
                         Sabiduría (WIS): {{ store.detalles[c.id]?.sabiduria }}
-                        Modificador: {{ calcularModificador( store.detalles[c.id]?.sabiduria ) }}
+                        Modificador: {{ store.calcularModificador( store.detalles[c.id]?.sabiduria ) }}
                     </div>
                     <div class="">
                         Carisma (CHA): {{ store.detalles[c.id]?.carisma }}
-                        Modificador: {{ calcularModificador( store.detalles[c.id]?.carisma ) }}
+                        Modificador: {{ store.calcularModificador( store.detalles[c.id]?.carisma ) }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <Modal :show="eliminar">
+        <p>¿Desea eliminar a {{ name }}?</p>
+        <div class="">
+            <button @click="elimination">Sí</button>
+        </div>
+        <div @click="eliminate(idCriatura, name)" class="">No</div>
+    </Modal>
+
     <SentidosCriatura :show="sentido" :id="idCriatura" @cancelar="sentidos" />
     <HabilidadesCriatura :show="habilidad" :id="idCriatura" @cancelar="habilidades" />
     <SalvacionesCriatura :show="salvacion" :id="idCriatura" @cancelar="salvaciones" />
     <InmunidadesCriatura :show="inmunidad" :id="idCriatura" @cancelar="inmunidades" />
     <ResistenciasCriaturaModal :show="resistencia" :id="idCriatura" @cancelar="resistencias" />
-    <CrearCriaturaModal :show="crear" @cancelar="crearCriatura" />
+    <CrearCriaturaModal :show="crear" :modo="crac" :id="idCriatura" @cancelar="crearCriatura" />
     <AccionesCriaturaModal :show="accion" :id="idCriatura" @cancelar="acciones" />
 
 </template>

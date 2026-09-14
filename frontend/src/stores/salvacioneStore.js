@@ -36,5 +36,34 @@ export const useSalvacionStore = defineStore('salvacion', () => {
         actualizaSalvaciones(accion.idcriatura);
     }
 
-    return { salvaciones, tipos, actualizaSalvaciones, cargarTipos, agregarSalvacion }
+    const editarSalvacion = async (accion) => {
+        const agregar = {
+            "id": accion.id,
+            "idcriatura": accion.idcriatura,
+            "idcaracteristica": accion.idtipo,
+            "modificador": accion.cantidad
+        }
+        const response = await apiFetch(
+            "salvaciones/editar_salvacion", 
+            {
+            method: 'PUT',
+            body: JSON.stringify(agregar)
+            }
+        );
+        toast.success("Salvación editada exitosamente");
+        actualizaSalvaciones(accion.idcriatura);
+    }
+
+    const eliminarSalvacion = async(id, idcriatura) =>{
+        const response = await apiFetch(
+            `salvaciones/eliminar_salvacion/${id}`, 
+            {
+            method: 'DELETE'
+            }
+        );
+        toast.success("Salvación eliminada exitosamente");
+        actualizaSalvaciones(idcriatura);
+    }
+
+    return { eliminarSalvacion, editarSalvacion, salvaciones, tipos, actualizaSalvaciones, cargarTipos, agregarSalvacion }
 });

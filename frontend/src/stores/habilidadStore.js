@@ -36,5 +36,34 @@ export const useHabilidadStore = defineStore('habilidad', () => {
         actualizaHabilidades(accion.idcriatura);
     }
 
-    return { habilidades, tipos, actualizaHabilidades, cargarTipos, agregarHabilidad }
+    const editarHabilidad = async (accion) => {
+        const agregar = {
+            "id": accion.id,
+            "idcriatura": accion.idcriatura,
+            "idhabilidad": accion.idtipo,
+            "modificador": accion.cantidad
+        }
+        const response = await apiFetch(
+            "habilidades/editar_habilidad", 
+            {
+            method: 'PUT',
+            body: JSON.stringify(agregar)
+            }
+        );
+        toast.success("Acción/Habilidad editada exitosamente");
+        actualizaHabilidades(accion.idcriatura);
+    }
+
+    const eliminarHabilidad = async(id, idcriatura) =>{
+        const response = await apiFetch(
+            `habilidades/eliminar_habilidad/${id}`, 
+            {
+            method: 'DELETE'
+            }
+        );
+        toast.success("Acción/Habilidad eliminada exitosamente");
+        actualizaHabilidades(idcriatura);
+    }
+
+    return { editarHabilidad, eliminarHabilidad, habilidades, tipos, actualizaHabilidades, cargarTipos, agregarHabilidad }
 });

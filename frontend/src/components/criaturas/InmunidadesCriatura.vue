@@ -5,7 +5,10 @@ import Modal from '@/Components/shared/Modal.vue';
 
 const store = useInmunidadStore();
 const agregar = ref(false);
-const cid = ref(0); 
+const cid = ref(0);
+const elimn = ref(false);
+const aidi = ref('');
+const title = ref(''); 
 
 const formulario = () => {
     agregar.value = !agregar.value;
@@ -49,18 +52,29 @@ const inmunidad = () => {
     accion.descripcion = null;
 }
 
+const verElimn = (id, titul) =>{
+    aidi.value = id;
+    title.value = titul;
+    elimn.value = !elimn.value;
+}
+
+const eliminar = (id) =>{
+    store.eliminarInmunidad(id, cid.value);
+    elimn.value = !elimn.value;
+}
+
 const emit = defineEmits(['cancelar']);
 </script>
 
 <template>
-    <Modal :show="show && !agregar">
+    <Modal :show="show && !agregar && !elimn">
         <div class="">
             <button @click="formulario">Agregar Inmunidad</button>
         </div>
         <h1>Inmunidades de Estado</h1>
         <div v-for="a in store.inmunidades" class="">
             <div class="">
-                {{ a.inmunidad }}
+                {{ a.inmunidad }} <button @click="verElimn(a.id, a.inmunidad)">Eliminar Inmunidad</button>
             </div>
         </div>
         <div class="">
@@ -85,6 +99,17 @@ const emit = defineEmits(['cancelar']);
         </form>
         <div class="">
             <button @click="formulario">Volver</button>
+        </div>
+    </Modal>
+    <Modal :show="elimn">
+        <div class="">
+            <p>¿Estás seguro de eliminar {{ title }}?</p>
+        </div>
+        <div class="">
+            <button @click="eliminar(aidi)">Sí</button>
+        </div>
+        <div class="">
+            <button @click="verElim(aidi, title)">No</button>
         </div>
     </Modal>
 </template>

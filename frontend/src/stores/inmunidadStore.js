@@ -35,5 +35,16 @@ export const useInmunidadStore = defineStore('inmunidad', () => {
         actualizaInmunidades(accion.idcriatura);
     }
 
-    return { inmunidades, tipos, actualizaInmunidades, cargarTipos, agregarInmunidad }
+    const eliminarInmunidad = async(id, idcriatura) =>{
+        const response = await apiFetch(
+            `inmunidades/eliminar_inmunidad/${id}`, 
+            {
+            method: 'DELETE'
+            }
+        );
+        toast.success("Inmunidad eliminada exitosamente");
+        actualizaInmunidades(idcriatura);
+    }
+
+    return { eliminarInmunidad, inmunidades, tipos, actualizaInmunidades, cargarTipos, agregarInmunidad }
 });

@@ -13,7 +13,8 @@ export async function apiFetch(ruta, opciones = {}) {
     })
 
     if (!response.ok) {
-        const error = await response.json().catch(() => ({ detail: 'Error del servidor' }))
+        const error = await response.json()
+        console.log(error)
         throw new Error(error.detail || `Error ${response.status}`)
     }
 

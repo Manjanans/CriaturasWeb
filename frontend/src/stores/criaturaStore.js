@@ -26,6 +26,25 @@ export const useCriaturaStore = defineStore('criatura', () =>
             abiertos.value.push(id);
         }
     }
+
+    const detalleEliminacion = async (id) => {
+        const det = await apiFetch(
+                `/criaturas/ver_criatura/${id}`
+        );
+        const valores = {
+            'nombre' : det.nombre,
+            'id' : det.id
+        }
+        return valores;
+    }
+
+    const detalleCriatura = async(id) => {
+        const det = await apiFetch(
+                `/criaturas/ver_criatura/${id}`
+        );
+
+        return det
+    }
     
     const crearNuevaCriatura = async (criatura) =>{
         if(criatura.publico === "false"){
@@ -35,10 +54,10 @@ export const useCriaturaStore = defineStore('criatura', () =>
 
         const criaturaBody = {
             "base":{
-                "cantdados": criatura.cantdados ? criatura.cantdados : 0,
-                "tipodado": criatura.tipodado ? criatura.tipodado : 0,
-                "vidatotal": criatura.vidatotal ? criatura.vidatotal : 0,
-                "modificadorvida": criatura.modificadorvida ? criatura.modificadorvida : 0,
+                "cantdados": criatura.cantdados ? criatura.cantdados:0,
+                "tipodado": criatura.tipodado ? criatura.tipodado:0,
+                "vidatotal": criatura.vidatotal ? criatura.vidatotal:0,
+                "modificadorvida": criatura.modificadorvida ? criatura.modificadorvida:0,
                 "nombre": criatura.nombre,
                 "cantexp": criatura.cantexp,
                 "publico": criatura.publico,
@@ -65,5 +84,70 @@ export const useCriaturaStore = defineStore('criatura', () =>
         await actualizaLista();    
     }
 
-    return {criaturas, verDetalle, abiertos, detalles, actualizaLista, crearNuevaCriatura}
+    const eliminarCriatura = async (id) =>{
+        const response = await apiFetch(`/criaturas/eliminar_criatura/${id}`, {
+            method: 'DELETE'
+        });
+        toast.success("Criatura eliminada exitosamente");
+        await actualizaLista();
+    }
+
+    const editarCriatura = async(criatura) =>{
+        const base = {
+            "id": criatura.idcriatura,
+            "cantdados": criatura.cantdados,
+            "tipodado": criatura.tipodado,
+            "vidatotal": criatura.vidatotal,
+            "modificadorvida": criatura.modificadorvida,
+            "nombre": criatura.nombre,
+            "cantexp": criatura.cantexp,
+            "publico": criatura.publico,
+            "id_privado": criatura.id_privado ? criatura.id_privado : null
+        }
+
+        const stats = {
+            "id": criatura.idstat,
+            "idcriatura": criatura.idcriatura,
+            "clasearmadura": criatura.clasearmadura,
+            "velocidad": criatura.velocidad,
+            "fuerza": criatura.fuerza,
+            "destreza": criatura.destreza,
+            "constitucion": criatura.constitucion,
+            "inteligencia": criatura.inteligencia,
+            "sabiduria": criatura.sabiduria,
+            "carisma": criatura.carisma
+        }
+
+        const actualizaBase = await apiFetch('/criaturas/actualizar_criatura', {
+            method: 'PUT',
+            body: JSON.stringify(base)
+        });
+        const actualizaStats = await apiFetch('/criaturas/actualizar_detalle', {
+            method: 'PUT',
+            body: JSON.stringify(stats)
+        });
+
+        
+        toast.success("Criatura actualizada exitosamente");
+        await actualizaLista();
+    }
+
+    const calcularModificador = (atr) =>{
+        return Math.floor((atr-10)/2)
+    }
+
+    const calcularVida = (tipo, dados, vida) => {
+        if (vida!=0){
+            return vida
+        }else{
+            let life = 0;
+            for(let i=0; i<dados; i++){
+                let valor = Math.floor(Math.random()*tipo);
+                life+=valor
+            }
+            return life
+        }
+    }
+
+    return { calcularModificador, calcularVida, criaturas, verDetalle, abiertos, detalles, actualizaLista, crearNuevaCriatura, eliminarCriatura, detalleEliminacion, detalleCriatura, editarCriatura }
 })

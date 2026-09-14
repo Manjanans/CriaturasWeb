@@ -36,5 +36,34 @@ export const useSentidoStore = defineStore('sentido', () => {
         actualizaSentidos(accion.idcriatura);
     }
 
-    return { sentidos, tipos, actualizaSentidos, cargarTipos, agregarSentido }
+    const editarSentido = async (accion) => {
+        const agregar = {
+            "id": accion.id,
+            "idcriatura": accion.idcriatura,
+            "idtiposentido": accion.idtipo,
+            "cantidad": accion.cantidad
+        }
+        const response = await apiFetch(
+            "sentidos/editar_sentido", 
+            {
+            method: 'PUT',
+            body: JSON.stringify(agregar)
+            }
+        );
+        toast.success("Sentido editada exitosamente");
+        actualizaSentidos(accion.idcriatura);
+    }
+
+    const eliminarSentido = async(id, idcriatura) =>{
+        const response = await apiFetch(
+            `sentidos/eliminar_sentido/${id}`, 
+            {
+            method: 'DELETE'
+            }
+        );
+        toast.success("Sentido eliminada exitosamente");
+        actualizaSentidos(idcriatura);
+    }
+
+    return { eliminarSentido, editarSentido, sentidos, tipos, actualizaSentidos, cargarTipos, agregarSentido }
 });

@@ -35,7 +35,7 @@ async def updates(
     model: Type[ModelType],
     db: Session
 ):
-    nueva = search_by_id(data.id, model, db, current_user)
+    nueva = await search_by_id(data.id, model, db)
     
     actualizar = data.model_dump(exclude_unset=True)
     actualizar.pop("id", None)

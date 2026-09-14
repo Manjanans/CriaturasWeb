@@ -6,9 +6,14 @@ import Modal from '@/Components/shared/Modal.vue';
 const store = useResistenciaStore();
 const agregar = ref(false);
 const cid  = ref(0);
+const modo = ref('');
+const aidi = ref('');
+const title = ref('');
+const elimn = ref(false);
 
-const formulario = () => {
+const formulario = (mode) => {
     agregar.value = !agregar.value;
+    modo.value = mode;
 }
 
 const props = defineProps(
@@ -19,6 +24,7 @@ const props = defineProps(
 );
 
 const resistencia = reactive({
+    'id': '',
     'idcriatura': cid,
     'idtipo': "",
     'cantidad': ""
@@ -44,23 +50,49 @@ watch(
 )
 
 const acciones = () => {
-    store.agregarResistencia(resistencia);
-    resistencia.idtipo = '';
-    resistencia.cantidad = "";
+    if (modo.value === 'crear'){
+        store.agregarResistencia(resistencia);
+        resistencia.idtipo = '';
+        resistencia.cantidad = "";
+    }
+    if (modo.value === 'editar'){
+        store.editarResistencia(resistencia);
+        resistencia.idtipo = '';
+        resistencia.cantidad = "";
+        formulario('');
+    }
+}
+
+const editar = (id, idh, mod) =>{
+    resistencia.id = id;
+    resistencia.idtipo = idh;
+    resistencia.cantidad = mod;
+    formulario('editar');
+}
+
+const verElim = (id, hab) =>{
+    elimn.value = !elimn.value;
+    aidi.value = id;
+    title.value = hab;
+}
+
+const eliminar = (id) =>{
+    store.eliminarResistencia(id, cid.value);
+    elimn.value = !elimn.value;
 }
 
 const emit = defineEmits(['cancelar']);
 </script>
 
 <template>
-    <Modal :show="show && !agregar">
+    <Modal :show="show && !agregar && !elimn">
         <div class="">
-            <button @click="formulario">Agregar resistencia</button>
+            <button @click="formulario('crear')">Agregar resistencia</button>
         </div>
         <h1>Resistencias</h1>
         <div v-for="a in store.resistencias" class="">
             <div class="">
-                {{ a.resist }} - <span> {{ a.valor === 0.0 ? 'Inmune': a.valor === 0.5 ? 'Resistente' : 'Débil' }} </span>
+                {{ a.resist }} - <span> {{ a.valor === 0.0 ? 'Inmune': a.valor === 0.5 ? 'Resistente' : 'Débil' }} </span> <button @click="editar(a.id, a.idtipodanio, a.valor)">Editar Resistencia</button> <button @click="verElim(a.id, a.resist)">Eliminar Resistencia</button>
             </div>
         </div>
         <div class="">
@@ -92,14 +124,33 @@ const emit = defineEmits(['cancelar']);
                     <div class=""></div>
                 </div>
                 <div class="">
-                    <div class="">
-                        <button type="submit">Agregar resistencia</button>
+                    <div v-if="modo === 'crear'" class="">
+                         <div class="">
+                            <button type="submit">Agregar Resistencia</button>
+                        </div>
+                    </div>
+                   
+                    <div v-else class="">
+                        <div class="">
+                            <button type="submit">Editar Resistencia</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </form>
         <div class="">
-            <button @click="formulario">Volver</button>
+            <button @click="formulario('')">Volver</button>
+        </div>
+    </Modal>
+    <Modal :show="elimn">
+        <div class="">
+            <p>¿Estás seguro de eliminar {{ title }}?</p>
+        </div>
+        <div class="">
+            <button @click="eliminar(aidi)">Sí</button>
+        </div>
+        <div class="">
+            <button @click="verElim(aidi, title)">No</button>
         </div>
     </Modal>
 </template>

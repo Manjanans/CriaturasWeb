@@ -22,7 +22,6 @@ export const useAccioneStore = defineStore('catalogo', () => {
             console.error(e)
         }
     }
-
     const cargarTipos = async () => {
         tipos.value = await apiFetch('/catalogos/ver_descripciones');
         return tipos
@@ -42,8 +41,36 @@ export const useAccioneStore = defineStore('catalogo', () => {
             body: JSON.stringify(agregar)
             }
         );
-        toast.success("Habilidad agregada exitosamente")
+        toast.success("Acción/Habilidad agregada exitosamente");
     }
 
-    return {actualizaHabilidades, tipos, agregarAccion, cargarTipos, habilidades, acciones, clase}
+    const editarAccion = async (accion) => {
+        const agregar = {
+            "id": accion.id,
+            "idcriatura": accion.idcriatura,
+            "idtipodesc": accion.idtipo,
+            "titulodetalle": accion.titulo,
+            "descripciondetalle": accion.descripcion
+        }
+        const response = await apiFetch(
+            "acciones/actualizar_accion", 
+            {
+            method: 'PUT',
+            body: JSON.stringify(agregar)
+            }
+        );
+        toast.success("Acción/Habilidad editada exitosamente");
+    }
+
+    const eliminarAccion = async(id) =>{
+        const response = await apiFetch(
+            `acciones/eliminar_accion/${id}`, 
+            {
+            method: 'DELETE'
+            }
+        );
+        toast.success("Acción/Habilidad eliminada exitosamente");
+    }
+
+    return { eliminarAccion, editarAccion, actualizaHabilidades, tipos, agregarAccion, cargarTipos, habilidades, acciones, clase }
 });

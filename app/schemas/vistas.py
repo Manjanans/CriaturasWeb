@@ -39,12 +39,15 @@ class DetallesView(BaseModel):
     inteligencia: int
     sabiduria: int
     carisma: int
+    duenio: Optional[int]
+    publico: bool
     class Config:
         from_attributes = True
 
 class SentidosView(BaseModel):
     id: int
     idcriatura: int
+    idtiposentido: int
     tiposentido: str
     valor: int
     class Config:
@@ -53,6 +56,7 @@ class SentidosView(BaseModel):
 class HabilidadesView(BaseModel):
     id: int
     idcriatura: int
+    idhabilidad: int
     habilidad: str
     modif: int
     class Config:
@@ -61,6 +65,7 @@ class HabilidadesView(BaseModel):
 class SalvacionesView(BaseModel):
     id: int
     idcriatura: int
+    idcaracteristica: int
     carac: str
     modif: int
     class Config:
@@ -76,6 +81,7 @@ class InmunidadesView(BaseModel):
 class ResistenciasView(BaseModel):
     id: int
     idcriatura: int
+    idtipodanio: int
     resist: str
     valor: float
     class Config:
