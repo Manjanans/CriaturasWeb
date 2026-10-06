@@ -9,7 +9,7 @@ export const useAccioneStore = defineStore('catalogo', () => {
     const habilidades = ref([]);
     const acciones = ref([]);
     const tipos = ref([]);
-    const clase = ref([])
+    const clase = ref([]);
     const toast = useToast();
 
     const actualizaHabilidades = async (id) => {

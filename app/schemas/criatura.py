@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional, List
+from .vistas import DetallesView, AccionesView, SentidosView, HabilidadesView, SalvacionesView, InmunidadesView, ResistenciasView
 
 class CriaturaBase(BaseModel):
     nombre: str
@@ -19,7 +20,6 @@ class CriaturaResponse(CriaturaBase):
     id: int
     class Config:
         from_attributes = True
-
 
 class CriaturaUpdate(BaseModel):
     id: int
@@ -93,3 +93,21 @@ class CriaturaCompleta(BaseModel):
 class CompletaResponse(BaseModel):
     base: CriaturaResponse
     stats: StatsCreate
+
+class ResistenciaDivision(BaseModel):
+    weak: list[ResistenciasView] | None = None
+    resist: list[ResistenciasView] | None = None
+    inmune: list[ResistenciasView] | None = None
+
+class CriaturaAll(BaseModel):
+    base: DetallesView
+    accion: list[AccionesView] | None = None
+    sentido: list[SentidosView] | None = None
+    salvacion: list[SalvacionesView] | None = None
+    habilidad: list[HabilidadesView] | None = None
+    inmunidad: list[InmunidadesView] | None = None
+    resistencia: ResistenciaDivision | None = None
+
+class CriaturaBattle(BaseModel):
+    id: int
+    data: CriaturaAll

@@ -23,11 +23,6 @@ async def search_by_id(
     db: Session
 ) -> ModelType:
     nueva = db.get(model, search_num)
-    if not nueva:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"{model.__name__} not found"
-        )
     return nueva
 
 async def updates(
@@ -48,6 +43,23 @@ async def updates(
 
     return nueva
 
+async def updates_single(
+    id: int,
+    value,
+    column,
+    model: Type[ModelType],
+    db: Session
+):
+    ob = await search_by_id(id, model, db)
+
+    setattr(ob, column, value)
+
+    db.flush()
+    db.commit()
+    db.refresh(ob)
+
+    return ob
+
 async def deletes(
     num_del: int,
     model: Type[ModelType],
@@ -61,12 +73,26 @@ async def deletes(
     except:
         raise HTTPException(status_code=404, detail="Not found")
 
+async def delete_by_user(
+    current_user,
+    column,
+    model: Type[ModelType],
+    db: Session
+):
+    try:
+        stmt = delete(model).where(column == current_user.id)
+        db.execute(stmt)
+        db.commit()
+        return None
+    except:
+        raise HTTPException(status_code=404, detail="Not found")
+
 async def search_all(
     model: Type[ModelType],
     db: Session
 ) -> SchemaType:
     stmt = select(model)
-    query = db.execute(stmt).scalars()
+    query = db.execute(stmt).scalars().all()
     return query
 
 async def search_by_name(
@@ -75,11 +101,13 @@ async def search_by_name(
     model: Type[ModelType],
     db: Session
 ) -> list[ModelType]:
-    stmt = select(model).where(column.ilike(f"%{search_query}%"))
-    nueva = db.execute(stmt).scalars()
+    stmt = select(model).where(column.ilike(f"%{search_query}%")).order_by(column)
+    nueva = db.execute(stmt).scalars().all()
+    
     if not nueva:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"{model.__name__} not found"
+            status_code=404,
+            detail=f"Criatura no encontrada, o consulta vacía"
         )
+        return []
     return nueva

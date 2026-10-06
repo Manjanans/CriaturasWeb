@@ -20,7 +20,7 @@ async def visualizar_acciones(
     nueva = db.execute(
         select(Acciones)
         .where(Acciones.idcriatura == num_item)
-        ).scalars()
+        ).scalars().all()
     return nueva
 
 @router.post("/agregar_accion", response_model=DetalleCreate)

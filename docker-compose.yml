@@ -4,13 +4,13 @@ services:
       context: .
       dockerfile: backend.dockerfile
     ports:
-      - "8000:8000"
+      - "9000:9000"
     volumes:
       - .:/app
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/criaturas
+      - DATABASE_URL=postgresql+psycopg2://postgres:postgres@db:5432/criaturas
       - LANG=es_CL.UTF-8
       - LC_ALL=es_CL.UTF-8
     depends_on:
@@ -20,7 +20,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "8080:8080"
+      - "9090:9090"
     volumes:
       - ./frontend:/app
       - /app/node_modules

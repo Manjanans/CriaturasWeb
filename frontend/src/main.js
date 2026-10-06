@@ -12,5 +12,8 @@ const pinia = createPinia();
 
 app.use(pinia);
 app.use(router);
-app.use(Toast);
+app.use(Toast, {
+    timeout: 2000,
+    zIndex: 100000,
+});
 app.mount('#app');

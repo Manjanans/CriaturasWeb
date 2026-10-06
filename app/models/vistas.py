@@ -12,6 +12,7 @@ class Criaturas(Base):
     tipo = Column(Integer)
     vida = Column(Integer)
     publico = Column(Boolean)
+    modificador = Column(Integer)
     owner = Column(Integer)
 
 class Acciones(Base):

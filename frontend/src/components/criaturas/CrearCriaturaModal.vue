@@ -78,6 +78,7 @@ const verificarVida = () =>{
 const crearCriatura = () => {
     verificarVida();
     useCriaturaStore().crearNuevaCriatura(criatura);
+    limpieza();
     emit('cancelar');
 }
 
@@ -137,101 +138,113 @@ const execute = (mode) =>{
 
 </script>
 <template>
-    <Modal :show="show">
-        <form @submit.prevent="execute(mode)" >
-            <div class="grid grid-cols-2 gap-4 pb-6">
-                <div class="pb-5">
-                    <label for="">¿Quieres dejarlo público?</label>
-                    <select v-model="criatura.publico" required>
-                        <option value="true">Sí</option>
-                        <option value="false">No</option>
+    <Modal :show="show" :title="modo === 'crear' ? 'Crear Nueva Criatura' : 'Editar Criatura'" @close="emit('cancelar')">
+        <form @submit.prevent="execute(mode)">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-4 bg-white border border-stone-300 rounded shadow-sm">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">¿Quieres dejarlo público?</label>
+                    <select v-model="criatura.publico" required class="w-full p-2 bg-white border border-stone-400 rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner">
+                        <option :value="true">Sí</option>
+                        <option :value="false">No</option>
                     </select>
                 </div>
-                <div class="pb-5">
-                    <label for="">¿Quieres hacer la criatura con dados y tipo de dado?</label>
-                    <select @change="vida" required>
-                        <option value="true">Sí</option>
-                        <option value="false">No</option>
-                    </select>
-                </div>
-            </div>
-            <div class="grid grid-cols-3 gap-4 pb-6">
-                <div class="">
-                    <label for="nombre">Nombre</label>
-                    <input v-model="criatura.nombre" type="text" name="nombre" placeholder="Ingresa el nombre" required>
-                </div>
-                <div class="">
-                    <label for="exp">Cantidad de Experiencia:</label>
-                    <input v-model.number="criatura.cantexp" type="number" name="exp" placeholder="50" required>
-                </div>
-                <div v-if="vidita" class="">
-                    <div class="pb-5">
-                        <label for="dice">Cantidad de Dados:</label>
-                        <input v-model.number="criatura.cantdados" type="number" name="dice" placeholder="8">
-                    </div>
-                    <div class="pb-5">
-                        <label for="type">Tipo de Dado:</label>
-                        <select v-model.number="criatura.tipodado">
-                            <option value="4">d4</option>
-                            <option value="6">d6</option>
-                            <option value="8">d8</option>
-                            <option value="10">d10</option>
-                            <option value="12">d12</option>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">¿Usar fórmula de dados para HP?</label>
+                        <select @change="vida" required class="w-full p-2 bg-white border border-stone-400 rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner">
+                            <option :value="true">Sí</option>
+                            <option :value="false">No</option>
                         </select>
                     </div>
-                    <div class="pb-5">
-                        <label for="lifemod">Modificador de Vida:</label>
-                        <input v-model.number="criatura.modificadorvida" type="number" name="lifemod" placeholder="8">
+                </div>
+
+                <!-- Basic Info -->
+                <h3 class="text-lg font-bold text-stone-700 uppercase tracking-widest border-b border-stone-300 pb-1 mb-4">Información General</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Nombre:</label>
+                        <input v-model="criatura.nombre" type="text" placeholder="Ej: Dragón Rojo Anciano" required class="w-full p-2.5 bg-white border border-stone-400 rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner font-bold text-lg text-dnd-red">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Experiencia (XP):</label>
+                        <input v-model.number="criatura.cantexp" type="number" placeholder="50" required class="w-full p-2 bg-white border border-stone-400 rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner">
+                    </div>
+                    
+                    <!-- Health Logic -->
+                    <template v-if="vidita">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Cant. de Dados:</label>
+                            <input v-model.number="criatura.cantdados" type="number" placeholder="Ej: 8" class="w-full p-2 bg-white border border-stone-400 rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Tipo de Dado:</label>
+                            <select v-model.number="criatura.tipodado" class="w-full p-2 bg-white border border-stone-400 rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner">
+                                <option value="4">d4</option>
+                                <option value="6">d6</option>
+                                <option value="8">d8</option>
+                                <option value="10">d10</option>
+                                <option value="12">d12</option>
+                                <option value="20">d20</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Mod. de Vida (+):</label>
+                            <input v-model.number="criatura.modificadorvida" type="number" placeholder="Ej: 16" class="w-full p-2 bg-white border border-stone-400 rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner">
+                        </div>
+                    </template>
+                    <template v-else>
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Vida Total (Fija):</label>
+                            <input v-model.number="criatura.vidatotal" type="number" placeholder="Ej: 20" class="w-full p-2 bg-white border border-stone-400 rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner max-w-xs">
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Attributes -->
+                <h3 class="text-lg font-bold text-stone-700 uppercase tracking-widest border-b border-stone-300 pb-1 mb-4">Atributos y Estadísticas</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Armadura (CA):</label>
+                        <input v-model.number="criatura.clasearmadura" type="number" placeholder="10" required class="w-full p-2 bg-white border border-stone-400 rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner font-bold text-center">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Velocidad (pies):</label>
+                        <input v-model.number="criatura.velocidad" type="number" placeholder="30" required class="w-full p-2 bg-white border border-stone-400 rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner text-center">
                     </div>
                 </div>
-                <div v-else class="">
-                    <div class="">
-                        <label for="life">Ingresa la vida total:</label>
-                        <input v-model.number="criatura.vidatotal" type="number" name="life" placeholder="20">
+                
+                <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8 bg-stone-100 p-4 border border-stone-300 rounded-sm">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-widest text-dnd-red mb-1 text-center">STR</label>
+                        <input v-model.number="criatura.fuerza" type="number" placeholder="10" required class="w-full p-2 bg-white border border-dnd-gold rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner font-bold text-center text-lg">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-widest text-dnd-red mb-1 text-center">DEX</label>
+                        <input v-model.number="criatura.destreza" type="number" placeholder="10" required class="w-full p-2 bg-white border border-dnd-gold rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner font-bold text-center text-lg">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-widest text-dnd-red mb-1 text-center">CON</label>
+                        <input v-model.number="criatura.constitucion" type="number" placeholder="10" required class="w-full p-2 bg-white border border-dnd-gold rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner font-bold text-center text-lg">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-widest text-dnd-red mb-1 text-center">INT</label>
+                        <input v-model.number="criatura.inteligencia" type="number" placeholder="10" required class="w-full p-2 bg-white border border-dnd-gold rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner font-bold text-center text-lg">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-widest text-dnd-red mb-1 text-center">WIS</label>
+                        <input v-model.number="criatura.sabiduria" type="number" placeholder="10" required class="w-full p-2 bg-white border border-dnd-gold rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner font-bold text-center text-lg">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-widest text-dnd-red mb-1 text-center">CHA</label>
+                        <input v-model.number="criatura.carisma" type="number" placeholder="10" required class="w-full p-2 bg-white border border-dnd-gold rounded-sm focus:border-dnd-red focus:ring-1 focus:ring-dnd-red outline-none text-stone-900 shadow-inner font-bold text-center text-lg">
                     </div>
                 </div>
-            </div>
-            <div class="grid grid-cols-4 gap-4">
-                <div class="pb-5">
-                    <label for="ac">Clase de Armadura:</label>
-                    <input v-model.number="criatura.clasearmadura" type="number" name="ac" placeholder="10" required>
+
+                <!-- Footer Actions -->
+                <div class="flex flex-row-reverse space-x-3 space-x-reverse border-t-2 border-stone-300 pt-4 mt-6">
+                    <button type="submit" class="px-6 py-3 bg-dnd-red text-parchment font-bold text-sm tracking-widest uppercase border border-dnd-gold hover:bg-[#6b0000] transition-colors shadow-lg rounded-sm">
+                        {{ modo === 'crear' ? 'Guardar Criatura' : 'Actualizar Criatura' }}
+                    </button>
                 </div>
-                <div class="pb-5">
-                    <label for="speed">Velocidad:</label>
-                    <input v-model.number="criatura.velocidad" type="number" name="speed" placeholder="10" required>
-                </div>
-                <div class="pb-5">
-                    <label for="str">Fuerza:</label>
-                    <input v-model.number="criatura.fuerza" type="number" name="str" placeholder="10" required>
-                </div>
-                <div class="pb-5">
-                    <label for="dex">Destreza:</label>
-                    <input v-model.number="criatura.destreza" type="number" name="dex" placeholder="10" required>
-                </div>
-                <div class="pb-5">
-                    <label for="con">Constitución:</label>
-                    <input v-model.number="criatura.constitucion" type="number" name="con" placeholder="10" required>
-                </div>
-                <div class="pb-5">
-                    <label for="int">Inteligencia:</label>
-                    <input v-model.number="criatura.inteligencia" type="number" name="int" placeholder="10" required>
-                </div>
-                <div class="pb-5">
-                    <label for="wis">Sabiduría:</label>
-                    <input v-model.number="criatura.sabiduria" type="number" name="wis" placeholder="10" required>
-                </div>
-                <div class="pb-5">
-                    <label for="cha">Carisma:</label>
-                    <input v-model.number="criatura.carisma" type="number" name="cha" placeholder="10" required>
-                </div>
-            </div>
-            <div v-if="modo === 'crear'" class="">
-                <button type="submit" >Crear Criatura</button>
-            </div>
-            <div v-else class="">
-                <button type="submit">Editar Criatura</button>
-            </div>
-        </form>
-        <button @click="emit('cancelar')">Cancelar</button>
+            </form>
     </Modal>
 </template>

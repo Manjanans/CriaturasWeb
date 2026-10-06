@@ -1,2 +1,37 @@
 @import "tailwindcss";
 
+@theme {
+    --color-parchment: #fdfbf7;
+    --color-dnd-red: #8b0000;
+    --color-dnd-dark: #1c1917;
+    --color-dnd-gold: #b45309;
+    --color-dnd-gold-light: #d97706;
+
+    --font-sans: "Lato", sans-serif;
+    --font-fantasy: "Lora", serif;
+}
+
+/* Forzar toasts siempre por encima de los modales */
+.Vue-Toastification__container {
+    z-index: 100000 !important;
+}
+
+@layer base {
+    body {
+        background-color: var(--color-dnd-dark);
+        color: var(--color-parchment);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: var(--color-dnd-red);
+        font-family: var(--font-fantasy);
+    }
+}

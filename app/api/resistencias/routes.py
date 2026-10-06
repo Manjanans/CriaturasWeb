@@ -18,7 +18,7 @@ async def visualizar_resistencias(
     current_user = Depends(get_current_user)
 ):
     stmt = select(Resistencias).where(Resistencias.idcriatura == num_criat)
-    resistencias = db.execute(stmt).scalars()
+    resistencias = db.execute(stmt).scalars().all()
     return resistencias
 
 @router.post("/crear_resistencia", response_model=ResistenciaResponse)

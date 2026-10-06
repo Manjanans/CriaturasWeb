@@ -14,8 +14,7 @@ export async function apiFetch(ruta, opciones = {}) {
 
     if (!response.ok) {
         const error = await response.json()
-        console.log(error)
-        throw new Error(error.detail || `Error ${response.status}`)
+        throw new Error(error.detail.message)
     }
 
     // 204 No Content (DELETE exitoso) no tiene body

@@ -7,10 +7,10 @@ class Iniciativa(Base):
     __table_args__ = {"schema": "public"}
 
     id = Column(Integer, primary_key=True)
-    idUsuario = Column(Integer, ForeignKey("usuarios.user.id", ondelete="CASCADE"))
-    nombreCriatura = Column(String(50), unique=True)
-    valorIniciativa = Column(Integer)
-    idCriatura = Column(Integer, ForeignKey("public.criatura.id", ondelete="CASCADE"))
+    idusuario = Column(Integer, ForeignKey("usuarios.users.id", ondelete="CASCADE"))
+    nombrecriatura = Column(String(50), unique=True)
+    valoriniciativa = Column(Integer)
+    idcriatura = Column(Integer, ForeignKey("public.criatura.id", ondelete="CASCADE"))
     vida = Column(Integer)
 
 class Turno(Base):
@@ -18,5 +18,6 @@ class Turno(Base):
     __table_args__ = {"schema": "public"}
 
     id = Column(Integer, primary_key=True)
-    idUsuario = Column(Integer, ForeignKey("usuarios.user.id", ondelete="CASCADE"))
-    numTurno = Column(Integer)
+    idusuario = Column(Integer, ForeignKey("usuarios.users.id", ondelete="CASCADE"))
+    numturno = Column(Integer)
+    index_tabla = Column(Integer)

@@ -1,97 +1,133 @@
-# DND Master Battle Web
+# CriaturasWeb — DND Master Battle
 
-## Descripción del Proyecto
+Versión web de la aplicación de escritorio **DND Master Battle**, diseñada para ayudar a los Dungeon Masters (DMs) a gestionar criaturas, batallas e iniciativa en Dungeons & Dragons.
 
-Este proyecto es una versión web de la aplicación de escritorio "DND Master Battle", diseñada para ayudar a los Dungeon Masters (DMs) a gestionar encuentros de combate en Dungeons & Dragons. El objetivo es proporcionar una herramienta moderna y accesible para la gestión de criaturas, la iniciativa y el seguimiento de batallas, con una interfaz de usuario inmersiva y temática de fantasía.
+---
 
 ## Tecnologías Utilizadas
 
-El proyecto está construido con un stack moderno y modular:
-
 ### Backend
-*   **Framework:** [FastAPI](https://fastapi.tiangolo.com/) (Python)
-*   **Lenguaje:** Python 3.11+
-*   **ORM:** [SQLAlchemy](https://www.sqlalchemy.org/)
-*   **Base de Datos:** PostgreSQL
-*   **Autenticación:** JWT (JSON Web Tokens)
-*   **Servidor ASGI:** [Uvicorn](https://www.uvicorn.org/)
+
+| Tecnología | Uso |
+|---|---|
+| [FastAPI](https://fastapi.tiangolo.com/) | Framework principal (Python 3.11+) |
+| [SQLAlchemy](https://www.sqlalchemy.org/) | ORM para la base de datos |
+| [PostgreSQL](https://www.postgresql.org/) | Base de datos relacional |
+| [Uvicorn](https://www.uvicorn.org/) | Servidor ASGI |
+| [python-jose](https://python-jose.readthedocs.io/) | JWT (autenticación) |
+| [passlib + bcrypt](https://passlib.readthedocs.io/) | Hash de contraseñas |
+| [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) | Configuración via variables de entorno |
+| [psycopg2-binary](https://www.psycopg.org/) | Driver PostgreSQL |
+| [python-multipart](https://github.com/Kludex/python-multipart) | Soporte para form data |
+| [jinja2](https://jinja.palletsprojects.com/) | Plantillas HTML (página `/status`) |
 
 ### Frontend
-*   **Framework:** [Vue.js 3](https://vuejs.org/)
-*   **Herramienta de Build:** [Vite](https://vitejs.dev/)
-*   **Lenguaje:** JavaScript, HTML, CSS
-*   **Estilos:** CSS personalizado con fuentes temáticas (Cinzel, Merriweather)
 
-### Contenedores
-*   **Orquestación:** [Docker Compose](https://docs.docker.com/compose/)
-*   **Contenedores:** Docker
+| Tecnología | Uso |
+|---|---|
+| [Vue.js 3](https://vuejs.org/) | Framework principal |
+| [Vite 5](https://vitejs.dev/) | Herramienta de build y dev server |
+| [Vue Router 4](https://router.vuejs.org/) | Navegación entre páginas |
+| [Pinia 4](https://pinia.vuejs.org/) | Manejo de estado global |
+| [TailwindCSS 4](https://tailwindcss.com/) | Estilos utilitarios |
+| [vue-toastification](https://github.com/Maronato/vue-toastification) | Notificaciones toast |
 
-### Control de Versiones
-*   **Sistema:** Git
+### Infraestructura
 
-## Características Principales (Actuales)
+| Tecnología | Uso |
+|---|---|
+| [Docker Compose](https://docs.docker.com/compose/) | Orquestación de servicios (backend, frontend, db) |
+| Docker | Contenerización |
 
-*   **Autenticación de Usuarios:** Registro y inicio de sesión seguro mediante JWT.
-*   **Interfaz de Usuario Temática:** Diseño inmersivo con estética de fantasía, colores oscuros y texturas de pergamino.
-*   **Manejo de Errores Robusto:** Modales de error amigables para el usuario en el frontend.
-*   **Navegación Básica:** Barra de navegación con enlaces a "Criaturas", "Batalla" y "Perfil" (funcionalidad pendiente).
-*   **Estructura de API Modular:** Backend organizado en módulos lógicos (auth, criaturas, batallas, system) para facilitar la escalabilidad.
+---
 
 ## Estructura del Proyecto
 
-El proyecto se divide en dos directorios principales:
+```
+CriaturasWeb/
+├── app/                    # Backend FastAPI
+│   ├── api/                # Routers por módulo
+│   │   ├── auth/           # Registro y login (JWT)
+│   │   ├── criaturas/      # CRUD de criaturas
+│   │   ├── batallas/       # Gestión de batallas
+│   │   ├── catalogos/      # Catálogos de referencia
+│   │   ├── acciones/       # Acciones de criaturas
+│   │   ├── habilidades/    # Habilidades
+│   │   ├── inmunidades/    # Inmunidades
+│   │   ├── resistencias/   # Resistencias
+│   │   ├── salvaciones/    # Tiradas de salvación
+│   │   ├── sentidos/       # Sentidos especiales
+│   │   └── system/         # Health checks
+│   ├── core/               # Configuración y utilidades
+│   ├── models/             # Modelos SQLAlchemy
+│   ├── schemas/            # Schemas Pydantic
+│   ├── auth.py             # Lógica de autenticación JWT
+│   ├── db.py               # Conexión a la base de datos
+│   └── main.py             # Punto de entrada de la app
+├── frontend/               # Frontend Vue.js
+│   ├── src/
+│   │   ├── components/     # Componentes reutilizables
+│   │   ├── views/          # Vistas (páginas)
+│   │   ├── stores/         # Stores de Pinia
+│   │   ├── router/         # Configuración de Vue Router
+│   │   └── utils/          # Utilidades varias
+│   ├── vite.config.js
+│   └── package.json
+├── docker-compose.yml
+├── backend.dockerfile
+├── requirements.txt
+└── init.sql                # Script de inicialización de la BD
+```
 
-*   `app/`: Contiene todo el código del backend de FastAPI.
-*   `frontend/`: Contiene todo el código de la aplicación frontend de Vue.js.
+---
 
-## Configuración del Entorno de Desarrollo Local
-
-Para poner en marcha el proyecto en tu máquina local, sigue estos pasos:
+## Configuración del Entorno Local
 
 ### Prerrequisitos
-Asegúrate de tener [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y en ejecución.
 
-### Pasos para Iniciar la Aplicación
+*   [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y en ejecución.
 
-1.  **Clonar el Repositorio:**
+### Pasos
+
+1.  **Clonar el repositorio:**
     ```bash
     git clone https://github.com/Manjanans/CriaturasWeb.git
     cd CriaturasWeb
     ```
 
-2.  **Configurar Variables de Entorno:**
-    Crea un archivo `.env` en la raíz del proyecto (al mismo nivel que `docker-compose.yml`). Puedes usar `.env.example` como plantilla.
+2.  **Configurar las variables de entorno:**
     ```bash
     cp .env.example .env
     ```
-    Edita el archivo `.env` y reemplaza los valores con tus credenciales de base de datos de PostgreSQL (por ejemplo, de Neon) y una clave secreta segura:
+    Edita el `.env` con tus credenciales:
+    ```env
+    DATABASE_URL=postgresql://user:password@host:port/dbname
+    SECRET_KEY=tu_clave_secreta_muy_segura
     ```
-    DATABASE_URL="postgresql://user:password@host:port/dbname?sslmode=require"
-    SECRET_KEY="tu_clave_secreta_muy_segura"
-    ```
+    > **Nota:** Para desarrollo local con Docker Compose, el `docker-compose.yml` ya configura una base de datos PostgreSQL local automáticamente. El `DATABASE_URL` del `.env` se usaría para conectar a una base de datos externa (ej. Neon).
 
-3.  **Iniciar los Contenedores de Docker:**
-    Desde la raíz del proyecto, ejecuta:
+3.  **Iniciar los servicios:**
     ```bash
     docker-compose up --build
     ```
-    Esto construirá las imágenes de Docker e iniciará los servicios de backend y frontend.
 
-### Acceso a la Aplicación
+### Acceso
 
-Una vez que los contenedores estén en funcionamiento:
+| Servicio | URL |
+|---|---|
+| Frontend | http://localhost:8080 |
+| Backend API (Swagger) | http://localhost:8000/api/v1/openapi.json |
+| Backend Docs personalizadas | http://localhost:8000/docs |
+| Health Check | http://localhost:8000/health/health |
 
-*   **Frontend (Aplicación Web):** Abre tu navegador y ve a `http://localhost:8080`
-*   **Backend (Documentación de la API):** Abre tu navegador y ve a `http://localhost:8000/docs`
+---
 
-## Despliegue (Consideraciones)
+## Características Actuales
 
-Para el despliegue en producción en plataformas como [Render](https://render.com/), se recomienda configurar el frontend y el backend como servicios separados:
-
-*   **Backend:** Como un "Web Service" utilizando `backend.dockerfile`.
-*   **Frontend:** Como un "Static Site" construyendo la aplicación Vue.js desde el directorio `frontend/`.
-
-## Próximos Pasos
-
-*   Desarrollar la funcionalidad de gestión de batallas.
-*   Expandir la interfaz de usuario para las secciones de "Criaturas", "Batalla" y "Perfil".
+*   **Autenticación JWT:** Registro (`POST /auth/register`), login (`POST /auth/token`) y perfil (`GET /auth/me`).
+*   **CRUD de Criaturas:** Gestión completa con sus atributos (acciones, habilidades, inmunidades, resistencias, salvaciones, sentidos).
+*   **Gestión de Batallas:** Módulo de batallas disponible en la API.
+*   **Catálogos:** Datos de referencia para tipificar criaturas.
+*   **Health Checks:** Endpoints para verificar el estado del backend y la base de datos.
+*   **Notificaciones:** Feedback visual con toasts en el frontend.
+*   **Estado global:** Manejo de sesión y datos con Pinia stores.

@@ -18,7 +18,7 @@ export const useCriaturaStore = defineStore('criatura', () =>
         if (!detalles.value[id]) {
             detalles.value[id] = await apiFetch(
                 `/criaturas/ver_criatura/${id}`
-            );        
+            );
         }
         if (abiertos.value.includes(id)) {
             abiertos.value = abiertos.value.filter(i => i !== id);
@@ -40,7 +40,7 @@ export const useCriaturaStore = defineStore('criatura', () =>
 
     const detalleCriatura = async(id) => {
         const det = await apiFetch(
-                `/criaturas/ver_criatura/${id}`
+                `/criaturas/edicion_criatura/${id}`
         );
 
         return det
@@ -85,7 +85,7 @@ export const useCriaturaStore = defineStore('criatura', () =>
     }
 
     const eliminarCriatura = async (id) =>{
-        const response = await apiFetch(`/criaturas/eliminar_criatura/${id}`, {
+        await apiFetch(`/criaturas/eliminar_criatura/${id}`, {
             method: 'DELETE'
         });
         toast.success("Criatura eliminada exitosamente");
@@ -136,18 +136,33 @@ export const useCriaturaStore = defineStore('criatura', () =>
         return Math.floor((atr-10)/2)
     }
 
-    const calcularVida = (tipo, dados, vida) => {
+    const calcularVida = (dados, tipo, vida, mod) => {
         if (vida!=0){
             return vida
         }else{
-            let life = 0;
+            let life = mod;
             for(let i=0; i<dados; i++){
-                let valor = Math.floor(Math.random()*tipo);
+                let valor = Math.floor(Math.random()*tipo)+1;
                 life+=valor
             }
             return life
         }
     }
 
-    return { calcularModificador, calcularVida, criaturas, verDetalle, abiertos, detalles, actualizaLista, crearNuevaCriatura, eliminarCriatura, detalleEliminacion, detalleCriatura, editarCriatura }
+    const buscarCriatura = async (nombre) => {
+        if(nombre === '')
+        {
+            await actualizaLista()
+            return
+        }
+        try{
+            criaturas.value = await apiFetch(`/criaturas/buscar_criatura/${nombre}`);
+        }catch
+        {
+            criaturas.value = [];
+        }
+        
+    }
+
+    return { buscarCriatura, calcularModificador, calcularVida, criaturas, verDetalle, abiertos, detalles, actualizaLista, crearNuevaCriatura, eliminarCriatura, detalleEliminacion, detalleCriatura, editarCriatura }
 })
